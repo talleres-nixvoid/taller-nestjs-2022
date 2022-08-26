@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateSaludoDto } from './dto/create-saludo.dto';
 import { UpdateSaludoDto } from './dto/update-saludo.dto';
 import { Saludo } from './entities/saludo.entity';
+import { SaludoSinEmojiException } from './exceptions/saludo-sin-emoji.exception';
+import { SaludoSinTextoException } from './exceptions/saludo-sin-texto.expection';
 
 @Injectable()
 export class SaludoService {
@@ -13,6 +15,12 @@ export class SaludoService {
   ];
 
   create(createSaludoDto: CreateSaludoDto): Saludo[] {
+    if (!createSaludoDto.emoji) {
+      throw new SaludoSinEmojiException();
+    }
+    if (!createSaludoDto.texto) {
+      throw new SaludoSinTextoException();
+    }
     this.saludos.push(createSaludoDto);
     return this.saludos;
   }
