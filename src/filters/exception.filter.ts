@@ -21,7 +21,8 @@ export class AllExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
     const code = exception.code || 'UNKNOWN_ERROR';
-    const message = exception.message || 'Unknown error';
+    const message =
+      exception.response?.message || exception.message || 'Unknown error';
     response.status(status).json({
       status,
       code,
