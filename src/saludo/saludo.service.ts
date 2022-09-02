@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { Usuario } from '../usuario/entities/usuario.entity';
 import { CreateSaludoDto } from './dto/create-saludo.dto';
 import { UpdateSaludoDto } from './dto/update-saludo.dto';
 import { Saludo } from './entities/saludo.entity';
@@ -13,15 +14,22 @@ export class SaludoService {
   constructor(
     @InjectRepository(Saludo)
     private readonly saludoRepository: Repository<Saludo>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
-  create(createSaludoDto: CreateSaludoDto): Promise<Saludo> {
+  async create(createSaludoDto: CreateSaludoDto): Promise<Saludo> {
     if (!createSaludoDto.emoji) {
       throw new SaludoSinEmojiException();
     }
     if (!createSaludoDto.texto) {
       throw new SaludoSinTextoException();
     }
+    const usuario = new Usuario();
+    usuario.nombre = createSaludoDto.usuario.nombre;
+    usuario.colorFavorito = createSaludoDto.usuario.colorFavorito;
+    await this.dataSource.manager.save(usuario);
+    createSaludoDto.usuario = usuario;
     return this.saludoRepository.save(createSaludoDto);
   }
 
@@ -29,6 +37,9 @@ export class SaludoService {
     return this.saludoRepository.find({
       order: {
         id: 'ASC',
+      },
+      relations: {
+        usuario: true,
       },
     });
   }

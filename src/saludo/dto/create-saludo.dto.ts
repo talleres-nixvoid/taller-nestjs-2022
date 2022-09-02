@@ -1,4 +1,6 @@
-import { IsEmail, IsIn, IsString, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, Length } from 'class-validator';
+import { Usuario } from '../../usuario/entities/usuario.entity';
 import { Saludo } from '../entities/saludo.entity';
 
 export class CreateSaludoDto extends Saludo {
@@ -12,4 +14,7 @@ export class CreateSaludoDto extends Saludo {
   @IsString({ message: '$property debe ser de tipo cadena' })
   @Length(1, 1, { message: '$property debe ser de $constraint1 caracter' })
   emoji: string;
+
+  @Type(() => Usuario)
+  usuario: Usuario;
 }

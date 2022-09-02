@@ -6,6 +6,8 @@ import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { Saludo } from './saludo/entities/saludo.entity';
 import { SaludoModule } from './saludo/saludo.module';
+import { Usuario } from './usuario/entities/usuario.entity';
+import { UsuarioModule } from './usuario/usuario.module';
 
 @Module({
   imports: [
@@ -18,9 +20,10 @@ import { SaludoModule } from './saludo/saludo.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Saludo],
+      entities: [Saludo, Usuario],
       synchronize: true,
     }),
+    UsuarioModule,
   ],
   controllers: [AppController],
   providers: [AppService, Logger],
