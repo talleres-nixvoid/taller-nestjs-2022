@@ -11,8 +11,5 @@ export class CreateSaludoDto extends Saludo {
 
   @IsString({ message: '$property debe ser de tipo cadena' })
   @Length(1, 1, { message: '$property debe ser de $constraint1 caracter' })
-  @IsIn(['👋', '❤️', '🥳'], {
-    message: '$property debe ser alguno de los siguientes $constraint1',
-  })
   emoji: string;
 }

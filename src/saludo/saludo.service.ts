@@ -26,7 +26,11 @@ export class SaludoService {
   }
 
   findAll(): Promise<Saludo[]> {
-    return this.saludoRepository.find();
+    return this.saludoRepository.find({
+      order: {
+        id: 'ASC',
+      },
+    });
   }
 
   async findOne(id: number) {
