@@ -1,50 +1,50 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateSaludoDto } from './dto/create-saludo.dto';
 import { UpdateSaludoDto } from './dto/update-saludo.dto';
 import { Saludo } from './entities/saludo.entity';
+import { SaludoNoEncontrado } from './exceptions/saludo-no-encontrado.exception';
 import { SaludoSinEmojiException } from './exceptions/saludo-sin-emoji.exception';
 import { SaludoSinTextoException } from './exceptions/saludo-sin-texto.expection';
 
 @Injectable()
 export class SaludoService {
-  saludos: Saludo[] = [
-    {
-      texto: 'Hola',
-      emoji: '👋',
-    },
-  ];
+  constructor(
+    @InjectRepository(Saludo)
+    private readonly saludoRepository: Repository<Saludo>,
+  ) {}
 
-  create(createSaludoDto: CreateSaludoDto): Saludo[] {
+  create(createSaludoDto: CreateSaludoDto): Promise<Saludo> {
     if (!createSaludoDto.emoji) {
       throw new SaludoSinEmojiException();
     }
     if (!createSaludoDto.texto) {
       throw new SaludoSinTextoException();
     }
-    this.saludos.push(createSaludoDto);
-    return this.saludos;
+    return this.saludoRepository.save(createSaludoDto);
   }
 
-  findAll(): Saludo[] {
-    return this.saludos;
+  findAll(): Promise<Saludo[]> {
+    return this.saludoRepository.find();
   }
 
-  findOne(id: number) {
-    return this.saludos[id];
-  }
-
-  update(id: number, updateSaludoDto: UpdateSaludoDto): Saludo {
-    if (updateSaludoDto.texto) {
-      this.saludos[id].texto = updateSaludoDto.texto;
+  async findOne(id: number) {
+    const saludo = await this.saludoRepository.findOneBy({ id });
+    if (!saludo) {
+      throw new SaludoNoEncontrado(id);
     }
-    if (updateSaludoDto.emoji) {
-      this.saludos[id].emoji = updateSaludoDto.emoji;
-    }
-    return this.saludos[id];
+    return saludo;
   }
 
-  remove(id: number) {
-    this.saludos.splice(id, 1);
-    return this.saludos;
+  update(id: number, updateSaludoDto: UpdateSaludoDto): Promise<Saludo> {
+    return this.saludoRepository.save({
+      id,
+      ...updateSaludoDto,
+    });
+  }
+
+  async remove(id: number) {
+    await this.saludoRepository.delete({ id });
   }
 }

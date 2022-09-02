@@ -20,12 +20,12 @@ export class SaludoController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  create(@Body() createSaludoDto: CreateSaludoDto): Saludo[] {
+  create(@Body() createSaludoDto: CreateSaludoDto): Promise<Saludo> {
     return this.saludoService.create(createSaludoDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Saludo[]> {
     return this.saludoService.findAll();
   }
 
@@ -38,11 +38,12 @@ export class SaludoController {
   update(
     @Param('id') id: string,
     @Body() updateSaludoDto: UpdateSaludoDto,
-  ): Saludo {
+  ): Promise<Saludo> {
     return this.saludoService.update(+id, updateSaludoDto);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.saludoService.remove(+id);
   }

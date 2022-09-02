@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { Saludo } from './saludo/entities/saludo.entity';
 import { SaludoModule } from './saludo/saludo.module';
 
 @Module({
@@ -17,7 +18,7 @@ import { SaludoModule } from './saludo/saludo.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [],
+      entities: [Saludo],
       synchronize: true,
     }),
   ],
